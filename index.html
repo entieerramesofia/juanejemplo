@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audio Reactive | CENTRO</title>
+    <link rel="stylesheet" href="css/site.css">
+  </head>
+  <body data-page="home">
+    <header>
+      <p>Clase de audio reactivo</p>
+      <h1>Audio reactivo con p5.js</h1>
+      <p>
+        Una introducción práctica para convertir amplitud, frecuencia y forma de onda
+        en decisiones visuales: escala, color, posición, ritmo, densidad y composición.
+      </p>
+      <nav>
+        <a href="#ejercicios">Abrir ejercicios</a>
+        <a href="#teoria">Ver teoría base</a>
+      </nav>
+      <h2>Contenido de la clase</h2>
+      <ul>
+        <li>Amplitud: volumen global con <code>p5.Amplitude()</code>.</li>
+        <li>Frecuencia: bandas de audio con <code>p5.FFT()</code>.</li>
+        <li>Waveform: forma de onda con <code>fft.waveform()</code>.</li>
+        <li>Mapeo visual: convertir datos sonoros en decisiones visuales.</li>
+      </ul>
+    </header>
+
+    <section id="contenido">
+      <h2>Ruta de la clase</h2>
+      <p>
+        La clase avanza desde una lectura simple de volumen hasta composiciones que mezclan
+        varias bandas del espectro. Cada paso separa un concepto para mantener clara la lógica.
+      </p>
+      <article>
+        <h3>1. Señal</h3>
+        <p>El audio cambia constantemente y necesita interacción de usuario para iniciar en navegador.</p>
+      </article>
+      <article>
+        <h3>2. Análisis</h3>
+        <p>Amplitud, FFT y waveform entregan datos de energía, distribución y movimiento.</p>
+      </article>
+      <article>
+        <h3>3. Composición</h3>
+        <p>Mapear datos a escala, color, rotación, líneas y capas construye una pieza visual intencional.</p>
+      </article>
+    </section>
+
+    <section id="teoria">
+      <h2>Teoría mínima para leer audio</h2>
+      <p>Podemos observar el sonido por forma de onda en el tiempo y energía por bandas de frecuencia.</p>
+      <article>
+        <h3>Amplitud</h3>
+        <p>Expresa intensidad general y suele mapearse a escala, pulso, grosor, opacidad o zoom.</p>
+      </article>
+      <article>
+        <h3>Frecuencia</h3>
+        <p>Describe velocidad de vibración y se separa en graves, medios y agudos con comportamientos distintos.</p>
+      </article>
+      <article>
+        <h3>FFT</h3>
+        <p>Divide la señal en bins y cada bin da energía entre <code>0</code> y <code>255</code>.</p>
+      </article>
+      <article>
+        <h3>Waveform</h3>
+        <p><code>fft.waveform()</code> devuelve muestras entre <code>-1</code> y <code>1</code> para líneas orgánicas.</p>
+      </article>
+    </section>
+
+    <section id="proceso">
+      <h2>Cómo procesarlo con p5.js</h2>
+      <p>La mecánica se repite: cargar audio, iniciar por interacción, analizar y mapear a visuales.</p>
+<pre><code>let song;
+let fft;
+let amplitude;
+
+function preload() {
+  song = loadSound("/audio/ItsOnlyNatural.mp3");
+}
+
+function setup() {
+  createCanvas(windowWidth, windowHeight);
+  fft = new p5.FFT(0.85, 64);
+  amplitude = new p5.Amplitude();
+  fft.setInput(song);
+  amplitude.setInput(song);
+}
+
+function draw() {
+  const spectrum = fft.analyze();
+  const waveform = fft.waveform();
+  const level = amplitude.getLevel();
+}</code></pre>
+      <ul>
+        <li><code>smoothing</code> estabiliza lecturas entre cuadros.</li>
+        <li><code>bins</code> define resolución del espectro.</li>
+        <li><code>map()</code> conecta número y dibujo.</li>
+      </ul>
+    </section>
+
+    <section id="audio">
+      <h2>Audios de referencia</h2>
+      <p>Los ejercicios usan estos archivos. Para otros audios, colócalos en <code>/audio</code>.</p>
+      <article>
+        <h3>ItsOnlyNatural.mp3</h3>
+        <audio controls preload="metadata" src="/audio/gunna.mp3"></audio>
+      </article>
+      <article>
+        <h3>TashSultana.mp3</h3>
+        <audio controls preload="metadata" src="/audio/gunna.mp3"></audio>
+      </article>
+    </section>
+
+    <section id="ejercicios">
+      <h2>Ejercicios</h2>
+      <p>Secuencia desde amplitud global hasta composición radial con varias lecturas.</p>
+      <article>
+        <h3>01 Amplitude Pulse</h3>
+        <p>Un círculo responde al volumen global para entender golpes y silencios.</p>
+        <a href="01-amplitude.html">Abrir ejercicio</a>
+      </article>
+      <article>
+        <h3>02 Spectrum Bars</h3>
+        <p>Barras reflejadas muestran energía por bins en una lectura FFT clásica.</p>
+        <a href="02-spectrum.html">Abrir ejercicio</a>
+      </article>
+      <article>
+        <h3>03 Waveform Ribbon</h3>
+        <p>Una cinta continua usa <code>fft.waveform()</code> con variación de grosor.</p>
+        <a href="03-waveform.html">Abrir ejercicio</a>
+      </article>
+      <p>Todos los sketches inician con clic o barra espaciadora por políticas del navegador.</p>
+    </section>
+  </body>
+</html>

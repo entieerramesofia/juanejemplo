@@ -1,0 +1,88 @@
+body {
+    padding: 0;
+    margin: 0;
+    overflow: hidden;
+    background-color: #000;
+}
+canvas, 
+audio {
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+
+button,
+.file-loader {
+    position: absolute;
+    padding: 1em 2em;
+    font-size: 24px;
+    cursor: pointer;
+    z-index: 99;
+    background: none;
+    color: white;
+    text-transform: uppercase;
+    font-weight: 100;
+    border: 1px solid white;
+    border-radius: 0;
+    transition: all 0.6s ease-in-out;
+}
+
+button {
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.file-loader {
+    left: 24px;
+    top: 24px;
+    font-size: 14px;
+}
+
+input[type="file"] {
+    display: none;
+}
+
+button:hover,
+.file-loader:hover {
+    transition: all 0.2s ease-in-out;
+    background: white;
+    color: black;
+}
+
+button:disabled {
+    cursor: wait;
+    opacity: 0.7;
+}
+
+#reset-plants {
+    min-width: 220px;
+}
+
+#audio-loader {
+    left: 50%;
+    top: calc(50% + 88px);
+    transform: translate(-50%, -50%);
+    min-width: 220px;
+    text-align: center;
+    font-size: 24px;
+}
+
+#reset-plants.has-generated {
+    left: 24px;
+    top: 24px;
+    transform: none;
+    min-width: 0;
+    padding: 0.9em 1.2em;
+    font-size: 14px;
+}
+
+#audio-loader.has-audio {
+    left: auto;
+    right: 24px;
+    top: 24px;
+    transform: none;
+    min-width: 0;
+    padding: 0.9em 1.2em;
+    font-size: 14px;
+}
