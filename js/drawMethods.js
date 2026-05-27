@@ -1,5 +1,3 @@
-setupDirtAudio();  // tierra
-setupLeafAudio();  // hojas
 
 async function drawPlantB(_x, _y, _radiusMax, _radiusMin, _layers, _countPerLayer) {
 
@@ -368,9 +366,9 @@ function randomFlowerColor() {
 }
 
 function randomDirtColor() {
-    let dirtHue = random(10, 60);
-    let dirtSat = random(5, 20);
-    let dirtBri = random(80, 100);
+    let dirtHue = random(14, 34);
+    let dirtSat = random(20, 50);
+    let dirtBri = random(28, 62);
 
     return [dirtHue, dirtSat, dirtBri];
 }

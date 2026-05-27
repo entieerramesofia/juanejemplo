@@ -45,6 +45,8 @@ let staticArtwork;
 let interactivePlantItems = [];
 let reactiveLeafStrokes = [];
 let flowerStrokes = [];
+// escala para reducir el tamaño de las flores en la versión 'oli'
+let oliFlowerScale = 0.62;
 let isRecordingReactiveLeaves = false;
 let currentReactiveLeaf;
 let currentInteractiveItemIndex = -1;
@@ -320,7 +322,17 @@ function drawInteractiveScene() {
     }
 
     if (item.image) {
+      let hovered = isMouseInsidePlantItem(item);
+
+      if (hovered) {
+        drawingContext.filter = "saturate(6) contrast(1.08)";
+      }
+
       image(item.image, item.x + item.offsetX, item.y + item.offsetY);
+
+      if (hovered) {
+        drawingContext.filter = "none";
+      }
     }
   }
 
@@ -433,8 +445,8 @@ function recordFlowerPetal(_x, _y, _width, _height, _hue, _sat, _bri, _alpha) {
   flowerStrokes.push({
     x: _x,
     y: _y,
-    width: _width,
-    height: _height,
+    width: _width * oliFlowerScale,
+    height: _height * oliFlowerScale,
     hue: _hue,
     sat: _sat,
     bri: _bri,
@@ -708,7 +720,7 @@ async function drawRandomPlants() {
     }
 
     if (typeof drawFlowerCluster === "function" && random() < 0.72) {
-      drawFlowerCluster(plant.x, plant.y, plant.size);
+      drawFlowerCluster(plant.x, plant.y, plant.size * oliFlowerScale);
     }
 
     if (i % 4 == 0) {

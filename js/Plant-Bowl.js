@@ -4,7 +4,7 @@ setupDirtAudio();  // tierra
 setupLeafAudio();  // hojas
 
 let fftDirt;
-let plantDensityMultiplier = 2.5;
+let plantDensityMultiplier = 100;
 
 function setupDirtAudio() {
     fftDirt = new p5.FFT(0.6, 64);
@@ -21,9 +21,9 @@ function getAudioDirtColor() {
     let treble = fftDirt.getEnergy("treble") / 255; // 2600+ Hz   → brillo
 
     return [
-        lerp(10, 40, bass)    + random(-5, 5),  // café frío ↔ café rojizo
-        lerp(5,  35, mid)     + random(-3, 3),  // tierra seca ↔ húmeda
-        lerp(70, 100, treble) + random(-8, 8)   // tierra oscura ↔ clara
+        lerp(14, 34, bass)    + random(-4, 4),  // café frío ↔ café rojizo
+        lerp(18, 48, mid)     + random(-3, 3),  // tierra seca ↔ húmeda
+        lerp(32, 68, treble)  + random(-6, 6)   // tierra oscura ↔ clara
     ];
 }
 
@@ -334,7 +334,7 @@ class PlantBowl {
     async drawPlant() {
         if (this.bowlType <= 1) {
             let sizeRatio  = abs(this.plantWidth - this.plantHeight) / min(this.plantWidth, this.plantHeight);
-            let plantCount = floor(random(8, 13) + random(5, 12) * sizeRatio); //PARA CONTEO PLANTAS
+            let plantCount = floor((random(8, 30) + random(5, 30) * sizeRatio) * plantDensityMultiplier); //PARA CONTEO PLANTAS
 
             for (let i = 0; i < plantCount; i++) {
                 let spawnX    = this.plantX + random(0.15, 0.85) * this.plantWidth;
@@ -357,12 +357,12 @@ class PlantBowl {
                 }
             }
         } else if (this.bowlType == 2) {
-            let plantCount = floor(random(7, 12));
+            let plantCount = floor(random(20, 30) * plantDensityMultiplier);
 
             for (let i = 0; i < plantCount; i++) {
                 let spawnX    = this.plantX + this.plantWidth  / 2 + random(-0.28, 0.28) * this.plantWidth;
                 let spawnY    = this.plantY + this.plantHeight / 2 + random(-0.28, 0.28) * this.plantHeight;
-                let plantSize = this.plantSize * random(0.5, 0.8);
+                let plantSize = this.plantSize * random(0.5, 1);
 
                 if (i == 0) {
                     spawnX    = this.plantX + this.plantWidth  / 2;
@@ -370,7 +370,7 @@ class PlantBowl {
                     plantSize = this.plantSize * random(0.75, 1);
                 }
 
-                let layers        = floor(random(5, 14));
+                let layers        = floor(random(5, 24));
                 let countPerLayer = floor(random(7, 28));
 
                 await drawPlantB(spawnX, spawnY, plantSize, 0, layers, countPerLayer);
