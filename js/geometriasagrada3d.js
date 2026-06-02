@@ -10,6 +10,39 @@ renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
 renderer.setClearColor(0x000308, 1);
 
 const scene = new THREE.Scene();
+
+
+const ambient = new THREE.AmbientLight(0xffffff, 1);
+scene.add(ambient);
+
+const light1 = new THREE.PointLight(0xffffff, 2);
+light1.position.set(300, 300, 300);
+scene.add(light1);
+
+const light2 = new THREE.PointLight(0x88aaff, 1.5);
+light2.position.set(-300, -200, -300);
+scene.add(light2);
+
+light1.intensity =
+  2 +
+  audioAverage * 12;
+
+light2.intensity =
+  1.5 +
+  audioAverage * 8;
+
+// Fondo claro
+scene.background = new THREE.Color(0x000814);
+// Rejilla del suelo
+const grid = new THREE.GridHelper(
+  4000, // tamaño total
+  120,  // divisiones
+  0x444444, // líneas principales
+  0x666666  // líneas secundarias
+);
+
+grid.position.y = -300; // ajusta según tu escena
+scene.add(grid);
 const camera = new THREE.PerspectiveCamera(60, W / H, 0.1, 2000);
 camera.position.set(0, 60, 320);
 camera.lookAt(0, 0, 0);
@@ -58,7 +91,7 @@ container.addEventListener('touchmove', e => {
 }, { passive: false });
 
 // ── Helpers ───────────────────────────────────────────────────────
-function lineMat(h, s, l, opacity = 6) {
+function lineMat(h, s, l, opacity = 10) {
   const c = new THREE.Color();
   c.setHSL(h, s, l);
   return new THREE.LineBasicMaterial({ color: c, transparent: opacity < 1, opacity });
@@ -69,7 +102,7 @@ function addLine(pts, mat) {
   scene.add(new THREE.Line(g, mat));
 }
 
-function addLineLoop(pts, mat) {
+function addLineLoop(pts, mat) {  
   const g = new THREE.BufferGeometry().setFromPoints([...pts, pts[0]]);
   scene.add(new THREE.Line(g, mat));
 }
@@ -98,11 +131,19 @@ for (let i = 0; i < 6; i++) {
   folCenters3.push({ x: Math.cos(a2) * R * Math.sqrt(3),  y: Math.sin(a2) * R * Math.sqrt(3),  z: 0 });
 }
 
-const folMat = lineMat(0.62, 0.5, 0.55, 0.25);
+const folMat = lineMat(0.62, 0.5, 0.55, 1);
 for (const c of folCenters3) {
   addLine(circlePoints(c.x, c.y, c.z, R, 80, 'z'), folMat);
-  addLine(circlePoints(c.x, c.y, c.z, R, 80, 'x'), lineMat(0.62, 0.4, 0.45, 0.10));
-  addLine(circlePoints(c.x, c.y, c.z, R, 80, 'y'), lineMat(0.62, 0.4, 0.45, 0.10));
+    addLine(circlePoints(c.x, c.y, c.z, R, 80, 'z'), folMat);
+      addLine(circlePoints(c.x, c.y, c.z, R, 80, 'z'), folMat);
+
+
+  addLine(circlePoints(c.x, c.y, c.z, R, 80, 'x'), lineMat(0.62, 0.4, 0.45, 1));
+    addLine(circlePoints(c.x, c.y, c.z, R, 80, 'x'), lineMat(0.62, 0.4, 0.45, 1));
+
+  addLine(circlePoints(c.x, c.y, c.z, R, 80, 'y'), lineMat(0.62, 0.4, 0.45, 1));
+    addLine(circlePoints(c.x, c.y, c.z, R, 80, 'y'), lineMat(0.62, 0.4, 0.45, 1));
+
 }
 
 // ── Cubo de Metatrón ──────────────────────────────────────────────
@@ -120,13 +161,13 @@ for (const z of zLevels) {
     metaNodes.push(new THREE.Vector3(b.x * 0.6, b.y * 0.6, z));
   }
 }
-const metaMat = lineMat(0.78, 0.5, 0.6, 0.08);
+const metaMat = lineMat(0.78, 0.5, 0.6, 0.8);
 for (let i = 0; i < metaNodes.length; i++)
   for (let j = i + 1; j < metaNodes.length; j++)
     addLine([metaNodes[i], metaNodes[j]], metaMat);
 
 // ── Merkaba 3D (dos tetraedros opuestos) ─────────────────────────
-const merkMat = lineMat(0.54, 0.7, 0.65, 0.45);
+const merkMat = lineMat(0.54, 0.7, 0.65, 1);
 const tetR = R * 1.1;
 
 function tetraPoints(flip) {
@@ -148,8 +189,8 @@ for (let flip = 0; flip < 2; flip++) {
 }
 
 // ── Sri Yantra (triángulos concéntricos inclinados) ───────────────
-const sriMat = lineMat(0.08, 0.8, 0.65, 0.28);
-for (const s of [0.38, 0.55, 0.72, 0.88]) {
+const sriMat = lineMat(0.08, 0.8, 0.65, 1);
+for (const s of [0.38, 0.55, 0.72, 1]) {
   for (let t = 0; t < 2; t++) {
     const pts = [];
     for (let i = 0; i < 3; i++) {
@@ -166,7 +207,7 @@ for (const s of [0.38, 0.55, 0.72, 0.88]) {
 
 // ── Espiral dorada 3D (hélice φ) ──────────────────────────────────
 const spiralPts = [];
-for (let a = 0; a < Math.PI * 2 * 6; a += 0.04) {
+for (let a = 0; a < Math.PI * 2 * 6; a += 1) {
   const rr = 3 * Math.pow(PHI, a / (Math.PI * 2));
   if (rr > R * 2.2) break;
   spiralPts.push(new THREE.Vector3(
@@ -175,13 +216,13 @@ for (let a = 0; a < Math.PI * 2 * 6; a += 0.04) {
     (a / (Math.PI * 2)) * R * 0.25 - R * 0.75
   ));
 }
-addLine(spiralPts, lineMat(0.13, 0.85, 0.65, 0.5));
+addLine(spiralPts, lineMat(0.13, 0.85, 0.65, 1));
 
 // ── Esferas y círculos sagrados ───────────────────────────────────
 for (const rr of [R * 0.98, R * 1.98]) {
-  addLine(circlePoints(0, 0, 0, rr, 120, 'z'), lineMat(0.56, 0.4, 0.65, 0.35));
-  addLine(circlePoints(0, 0, 0, rr, 120, 'x'), lineMat(0.56, 0.4, 0.65, 0.18));
-  addLine(circlePoints(0, 0, 0, rr, 120, 'y'), lineMat(0.56, 0.4, 0.65, 0.18));
+  addLine(circlePoints(0, 0, 0, rr, 120, 'z'), lineMat(0.56, 0.4, 0.65, 1));
+  addLine(circlePoints(0, 0, 0, rr, 120, 'x'), lineMat(0.56, 0.4, 0.65, 1));
+  addLine(circlePoints(0, 0, 0, rr, 120, 'y'), lineMat(0.56, 0.4, 0.65, 1));
 }
 
 // ── Polígonos sagrados inclinados ─────────────────────────────────
@@ -200,13 +241,13 @@ for (const pg of polyDefs) {
       Math.sin(a) * R * 1.98 * Math.sin(pg.tilt)
     ));
   }
-  addLine(pts, lineMat(pg.hue, 0.6, 0.65, 0.2));
+  addLine(pts, lineMat(pg.hue, 1, 0.65, 1));
 }
 
 // ══════════════════════════════════════════════════════════════════
-//  PARTÍCULAS (flow field 3D)
+//  PARTÍCULAS (flow field 3D)MOVER SI QUIERES MÁS
 // ══════════════════════════════════════════════════════════════════
-const NUM = 1400;
+const NUM = 50000; //40000//
 const posArr = new Float32Array(NUM * 3);
 const colArr = new Float32Array(NUM * 3);
 const pData = [];
@@ -222,7 +263,7 @@ for (let i = 0; i < NUM; i++) {
     vx: 0, vy: 0, vz: 0,
     life:    Math.random() * 200 + 80,
     maxLife: 280,
-    speed:   0.5 + Math.random() * 1.8,
+    speed:   0.6 + Math.random() * 1.8,
     hue:     Math.random()
   });
 }
@@ -234,7 +275,7 @@ const pMat = new THREE.PointsMaterial({
   size: 1.6,
   vertexColors: true,
   transparent: true,
-  opacity: 0.85,
+  opacity: 1,
   sizeAttenuation: true
 });
 const points = new THREE.Points(pGeo, pMat);
@@ -324,14 +365,44 @@ function updateParticles() {
   pGeo.attributes.color.needsUpdate    = true;
 }
 
-// ── Loop de animación ─────────────────────────────────────────────
+
+const sacredGroup = new THREE.Group();
+
+while(scene.children.length > 1){
+  sacredGroup.add(scene.children[0]);
+}
+
+scene.add(sacredGroup);
+
+sacredGroup.position.y = 40;
+
+
+// ── loop de animación ─────────────────────────────────────────────
 function animate() {
   requestAnimationFrame(animate);
+const t = performance.now() * 0.001;
+  
+if(analyser){
 
-  if (!isDragging) {
-    spherical.theta += 0.0003; // rotación automática suave
+  analyser.getByteFrequencyData(
+    audioData
+  );
+
+  let sum = 0;
+
+  for(let i=0;i<audioData.length;i++){
+    sum += audioData[i];
   }
 
+  audioAverage =
+    sum /
+    audioData.length /
+    255;
+}
+
+  if (!isDragging) {
+    spherical.theta += 0.002; // rotación automática suave
+  }
   const { theta, phi, radius } = spherical;
   camera.position.set(
     radius * Math.sin(phi) * Math.sin(theta),
@@ -341,11 +412,57 @@ function animate() {
   camera.lookAt(0, 0, 0);
 
   updateParticles();
-  zOff += 0.0025;
+  zOff += 0.0365;
 
+  
+const pulse =
+  1 +
+  Math.sin(t * 0.8) * 0.05 +
+  audioAverage * 0.25;
+
+sacredGroup.scale.set(
+  pulse,
+  pulse,
+  pulse
+);
+
+const corePulse =
+  1 +
+  audioAverage * 0.8;
+
+core.scale.set(
+  corePulse,
+  corePulse,
+  corePulse
+);
+
+core.material.emissiveIntensity =
+  8 +
+  audioAverage * 40;
+
+sacredGroup.rotation.y += 0.001;
   renderer.render(scene, camera);
+  
+
+  camera.position.x =
+Math.sin(t*0.15)*80;
+
+camera.position.y =
+Math.sin(t*0.12)*40;
+
+camera.lookAt(0,0,0);
 }
 animate();
+
+const t = performance.now() * 0.001;
+
+const pulse = 1 + Math.sin(t*0.5)*0.05;
+
+sacredGroup.scale.set(
+  pulse,
+  pulse,
+  pulse
+);
 
 // ── Resize ────────────────────────────────────────────────────────
 window.addEventListener('resize', () => {
@@ -353,4 +470,93 @@ window.addEventListener('resize', () => {
   camera.aspect = W2 / H2;
   camera.updateProjectionMatrix();
   renderer.setSize(W2, H2);
+  
 });
+
+
+
+const coreGeo = new THREE.SphereGeometry(60, 72, 72, 1);
+
+const coreMat = new THREE.MeshPhongMaterial({
+  color: (3,255,255),
+  emissive: 0x66ccff,
+  emissiveIntensity: 9
+});
+
+
+
+const core = new THREE.Mesh(coreGeo, coreMat);
+
+core.position.set(0,0,0);
+
+sacredGroup.add(core);
+
+// AUDIO REACTIVO
+
+let analyser;
+let audioData;
+let audioAverage = 0;
+
+const audioInput =
+document.getElementById("audioUpload");
+
+audioInput.addEventListener("change",(e)=>{
+
+  const file = e.target.files[0];
+
+  if(!file) return;
+
+  const audio = new Audio(
+    URL.createObjectURL(file)
+  );
+
+  audio.loop = true;
+
+  const audioCtx =
+    new (window.AudioContext ||
+         window.webkitAudioContext)();
+
+  const source =
+    audioCtx.createMediaElementSource(audio);
+
+  analyser =
+    audioCtx.createAnalyser();
+
+  analyser.fftSize = 512;
+
+  source.connect(analyser);
+  analyser.connect(audioCtx.destination);
+
+  audioData =
+    new Uint8Array(
+      analyser.frequencyBinCount
+    );
+
+  audio.play();
+
+});
+
+for(let i=0; i<5; i++){
+
+  const ringGeo = new THREE.TorusGeometry(
+    100 + i*30,
+    1,
+    16,
+    150
+  );
+
+  const ringMat = new THREE.MeshBasicMaterial({
+    color: 0x88ccff,
+    transparent: true,
+    opacity: 0.5
+  });
+
+  const ring = new THREE.Mesh(ringGeo, ringMat);
+
+  ring.rotation.x = Math.random()*Math.PI;
+  ring.rotation.y = Math.random()*Math.PI;
+
+  sacredGroup.add(ring);
+}
+
+
